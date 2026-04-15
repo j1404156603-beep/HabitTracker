@@ -91,12 +91,14 @@ final class HabitStore: ObservableObject {
         habits.sort(by: { $0.createdAt < $1.createdAt })
         local.save(habits)
         WidgetCenter.shared.reloadAllTimelines()
+        Task { await settings.scheduleReminders(using: habits) }
     }
 
     private func deleteLocal(_ habit: Habit) {
         habits.removeAll(where: { $0.id == habit.id })
         local.save(habits)
         WidgetCenter.shared.reloadAllTimelines()
+        Task { await settings.scheduleReminders(using: habits) }
     }
 
     // MARK: - Cloud merge
@@ -116,6 +118,7 @@ final class HabitStore: ObservableObject {
         habits = merged.sorted(by: { $0.createdAt < $1.createdAt })
         local.save(habits)
         WidgetCenter.shared.reloadAllTimelines()
+        Task { await settings.scheduleReminders(using: habits) }
 
         // Best-effort push local-only items to cloud
         for h in habits {

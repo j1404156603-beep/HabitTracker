@@ -7,6 +7,22 @@ struct SettingsView: View {
 
     @State private var isShowingSignOutDialog: Bool = false
     @State private var isShowingLanguageSheet: Bool = false
+    private var reminderRefreshToken: String {
+        [
+            settings.notificationsEnabled.description,
+            settings.reminderModeRawValue,
+            String(settings.reminderIntervalMinutes),
+            String(settings.reminderStartMinutes),
+            String(settings.reminderEndMinutes),
+            String(settings.reminderQuietStartMinutes),
+            String(settings.reminderQuietEndMinutes),
+            settings.reminderBannerEnabled.description,
+            settings.reminderSoundEnabled.description,
+            settings.reminderHapticsEnabled.description,
+            String(settings.dailyWaterGoalML),
+            String(settings.singleCheckInML)
+        ].joined(separator: "|")
+    }
 
     var body: some View {
         ZStack {
@@ -45,6 +61,10 @@ struct SettingsView: View {
                         TeslaRowToggle(icon: "bell", title: "settings_notifications", isOn: $settings.notificationsEnabled)
                         TeslaDivider()
                         TeslaRowToggle(icon: "arrow.triangle.2.circlepath", title: "settings_sync", isOn: $settings.syncEnabled)
+                    }
+
+                    TeslaCard {
+                        ReminderSettingsSection(settings: settings)
                     }
 
                     TeslaCard {
@@ -128,6 +148,99 @@ struct SettingsView: View {
             }
         }
         .navigationBarHidden(true)
+        .task {
+            await settings.scheduleReminders(using: store.habits)
+        }
+        .onChange(of: reminderRefreshToken) { _ in
+            Task { await settings.scheduleReminders(using: store.habits) }
+        }
+    }
+}
+
+private struct ReminderSettingsSection: View {
+    @ObservedObject var settings: AppSettings
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            TeslaSectionTitle("settings_reminder_title")
+
+            Picker("settings_reminder_mode", selection: Binding(
+                get: { settings.reminderMode },
+                set: { settings.reminderMode = $0 }
+            )) {
+                ForEach(AppSettings.ReminderMode.allCases) { mode in
+                    Text(mode.labelKey).tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+
+            if settings.reminderMode == .interval {
+                Stepper(value: $settings.reminderIntervalMinutes, in: 30...180, step: 30) {
+                    Text("settings_reminder_interval \(settings.reminderIntervalMinutes)")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(Color.theme.primaryText)
+                }
+            }
+
+            HStack(spacing: 12) {
+                MinutePicker(label: "settings_reminder_start", minuteValue: $settings.reminderStartMinutes)
+                MinutePicker(label: "settings_reminder_end", minuteValue: $settings.reminderEndMinutes)
+            }
+
+            HStack(spacing: 12) {
+                MinutePicker(label: "settings_reminder_quiet_start", minuteValue: $settings.reminderQuietStartMinutes)
+                MinutePicker(label: "settings_reminder_quiet_end", minuteValue: $settings.reminderQuietEndMinutes)
+            }
+
+            TeslaRowToggle(icon: "app.badge", title: "settings_reminder_banner", isOn: $settings.reminderBannerEnabled)
+            TeslaRowToggle(icon: "speaker.wave.2", title: "settings_reminder_sound", isOn: $settings.reminderSoundEnabled)
+            TeslaRowToggle(icon: "iphone.radiowaves.left.and.right", title: "settings_reminder_haptic", isOn: $settings.reminderHapticsEnabled)
+
+            Stepper(value: $settings.dailyWaterGoalML, in: 400...4000, step: 100) {
+                Text("settings_water_goal \(settings.dailyWaterGoalML)")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Color.theme.primaryText)
+            }
+            Stepper(value: $settings.singleCheckInML, in: 100...500, step: 50) {
+                Text("settings_water_per_checkin \(settings.singleCheckInML)")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Color.theme.primaryText)
+            }
+        }
+    }
+}
+
+private struct MinutePicker: View {
+    let label: LocalizedStringKey
+    @Binding var minuteValue: Int
+
+    private var dateBinding: Binding<Date> {
+        Binding<Date>(
+            get: {
+                let hour = max(0, min(23, minuteValue / 60))
+                let minute = max(0, min(59, minuteValue % 60))
+                return Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: .now) ?? .now
+            },
+            set: { newDate in
+                let c = Calendar.current.dateComponents([.hour, .minute], from: newDate)
+                let h = c.hour ?? 0
+                let m = c.minute ?? 0
+                minuteValue = max(0, min(1439, h * 60 + m))
+            }
+        )
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(label)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(Color.theme.secondaryText)
+            DatePicker("", selection: dateBinding, displayedComponents: .hourAndMinute)
+                .labelsHidden()
+                .datePickerStyle(.compact)
+                .tint(Color.theme.accent)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 

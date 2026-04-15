@@ -6,6 +6,20 @@
 "settings_language_en" = "English";
 "settings_notifications" = "Notifications";
 "settings_sync" = "Sync";
+"settings_reminder_title" = "Smart reminders";
+"settings_reminder_mode" = "Reminder mode";
+"settings_reminder_mode_interval" = "Interval";
+"settings_reminder_mode_window" = "Time window";
+"settings_reminder_interval" = "Remind every %d min";
+"settings_reminder_start" = "Start";
+"settings_reminder_end" = "End";
+"settings_reminder_quiet_start" = "Do not disturb from";
+"settings_reminder_quiet_end" = "Do not disturb to";
+"settings_reminder_banner" = "Banner";
+"settings_reminder_sound" = "Sound";
+"settings_reminder_haptic" = "Vibration";
+"settings_water_goal" = "Daily water goal: %d ml";
+"settings_water_per_checkin" = "Per check-in: %d ml";
 "settings_about" = "About";
 "settings_sign_out" = "Sign out";
 
@@ -31,6 +45,8 @@
 "home_check_in" = "Check in";
 "home_done" = "Done";
 "home_pending" = "Pending";
+"reminder_title" = "Time to drink water";
+"reminder_body %lld %lld" = "You've had %lld ml. %lld ml remaining.";
 
 "habits_title" = "Habits";
 "habits_section_title" = "Habits";

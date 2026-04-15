@@ -37,7 +37,7 @@ struct TodayTasksMediumProvider: TimelineProvider {
                 family: family,
                 tasks: SharedHabitWidgetStore.todayTasks(max: max)
             )
-            let next = Calendar.current.date(byAdding: .minute, value: 30, to: Date()) ?? Date().addingTimeInterval(1800)
+            let next = Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date().addingTimeInterval(3600)
             completion(Timeline(entries: [entry], policy: .after(next)))
         }
     }

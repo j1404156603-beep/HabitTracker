@@ -22,6 +22,7 @@ struct RootView: View {
             await auth.restoreSession()
             if auth.isSignedIn {
                 await store.refresh()
+                await settings.scheduleReminders(using: store.habits)
             }
         }
     }
@@ -37,7 +38,10 @@ struct RootView: View {
             } onCompletion: { result in
                 auth.handleSignInCompletion(result)
                 if auth.isSignedIn {
-                    Task { await store.refresh() }
+                    Task {
+                        await store.refresh()
+                        await settings.scheduleReminders(using: store.habits)
+                    }
                 }
             }
             .signInWithAppleButtonStyle(colorScheme == .dark ? .black : .white)

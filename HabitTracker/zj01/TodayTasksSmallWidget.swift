@@ -23,7 +23,7 @@ struct TodayTasksSmallProvider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<TodayTasksSmallEntry>) -> Void) {
         Task { @MainActor in
             let entry = TodayTasksSmallEntry(date: Date(), tasks: SharedHabitWidgetStore.todayTasks(max: 5))
-            let next = Calendar.current.date(byAdding: .minute, value: 30, to: Date()) ?? Date().addingTimeInterval(1800)
+            let next = Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date().addingTimeInterval(3600)
             completion(Timeline(entries: [entry], policy: .after(next)))
         }
     }
@@ -62,7 +62,7 @@ struct TodayTasksSmallEntryView: View {
 
                             Text(t.title)
                                 .font(.system(size: 13, weight: t.isDoneToday ? .regular : .semibold))
-                                .foregroundStyle(t.isDoneToday ? Color.theme.secondaryText : Color.theme.primaryText)
+                                .foregroundStyle(t.isDoneToday ? Color.theme.secondaryText : Color.theme.accent)
                                 .strikethrough(t.isDoneToday, pattern: .solid, color: Color.theme.secondaryText)
                                 .lineLimit(2)
                                 .minimumScaleFactor(0.72)

@@ -6,6 +6,20 @@
 "settings_language_en" = "English";
 "settings_notifications" = "通知";
 "settings_sync" = "数据同步";
+"settings_reminder_title" = "智能提醒";
+"settings_reminder_mode" = "提醒模式";
+"settings_reminder_mode_interval" = "间隔提醒";
+"settings_reminder_mode_window" = "时段提醒";
+"settings_reminder_interval" = "每 %d 分钟提醒一次";
+"settings_reminder_start" = "开始";
+"settings_reminder_end" = "结束";
+"settings_reminder_quiet_start" = "免打扰开始";
+"settings_reminder_quiet_end" = "免打扰结束";
+"settings_reminder_banner" = "通知栏提醒";
+"settings_reminder_sound" = "声音提醒";
+"settings_reminder_haptic" = "震动提醒";
+"settings_water_goal" = "每日饮水目标：%d ml";
+"settings_water_per_checkin" = "每次打卡：%d ml";
 "settings_about" = "关于";
 "settings_sign_out" = "退出账号";
 
@@ -31,6 +45,8 @@
 "home_check_in" = "打卡";
 "home_done" = "已打卡";
 "home_pending" = "未打卡";
+"reminder_title" = "该喝水啦";
+"reminder_body %lld %lld" = "已喝 %lld ml，还需 %lld ml";
 
 "habits_title" = "习惯";
 "habits_section_title" = "习惯";
