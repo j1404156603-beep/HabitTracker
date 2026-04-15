@@ -58,9 +58,27 @@ struct SettingsView: View {
                     }
 
                     TeslaCard {
+                        let syncBinding = Binding<Bool>(
+                            get: { settings.syncEnabled && !auth.isLocalMode },
+                            set: { newValue in
+                                if auth.isLocalMode {
+                                    settings.syncEnabled = false
+                                } else {
+                                    settings.syncEnabled = newValue
+                                }
+                            }
+                        )
                         TeslaRowToggle(icon: "bell", title: "settings_notifications", isOn: $settings.notificationsEnabled)
                         TeslaDivider()
-                        TeslaRowToggle(icon: "arrow.triangle.2.circlepath", title: "settings_sync", isOn: $settings.syncEnabled)
+                        TeslaRowToggle(icon: "arrow.triangle.2.circlepath", title: "settings_sync", isOn: syncBinding)
+                            .disabled(auth.isLocalMode)
+
+                        if auth.isLocalMode {
+                            Text("settings_sync_local_mode_note")
+                                .font(.system(size: 12, weight: .regular))
+                                .foregroundStyle(Color.theme.secondaryText)
+                                .padding(.leading, 34)
+                        }
                     }
 
                     TeslaCard {

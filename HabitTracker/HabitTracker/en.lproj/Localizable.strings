@@ -116,6 +116,9 @@
 "check_in_trend_caption" = "Last 30 days (all habits)";
 
 "root_sign_in_note" = "After sign-in, your data syncs to iCloud (private CloudKit DB).";
+"root_local_mode_button" = "Use locally without sign-in";
+"root_local_mode_note" = "Local mode unlocks all features except cloud sync.";
+"settings_sync_local_mode_note" = "Local mode is enabled. Cloud sync is unavailable.";
 "root_skip_sign_in" = "Skip sign-in (Debug)";
 
 "stats_axis_item" = "Item";

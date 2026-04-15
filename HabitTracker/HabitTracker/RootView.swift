@@ -21,6 +21,9 @@ struct RootView: View {
         .task {
             await auth.restoreSession()
             if auth.isSignedIn {
+                if auth.isLocalMode {
+                    settings.syncEnabled = false
+                }
                 await store.refresh()
                 await settings.scheduleReminders(using: store.habits)
             }
@@ -48,7 +51,38 @@ struct RootView: View {
             .frame(height: 48)
             .padding(.horizontal, 24)
 
+            Button {
+                auth.continueInLocalMode()
+                settings.syncEnabled = false
+                Task {
+                    await store.refresh()
+                    await settings.scheduleReminders(using: store.habits)
+                }
+            } label: {
+                Text("root_local_mode_button")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(Color.theme.primaryText)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .fill(Color.theme.cardBackground)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .strokeBorder(Color.theme.divider, lineWidth: 1)
+                    )
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 24)
+
             Text("root_sign_in_note")
+                .font(.footnote)
+                .foregroundStyle(Color.theme.secondaryText)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+
+            Text("root_local_mode_note")
                 .font(.footnote)
                 .foregroundStyle(Color.theme.secondaryText)
                 .multilineTextAlignment(.center)

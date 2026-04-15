@@ -116,6 +116,9 @@
 "check_in_trend_caption" = "过去 30 天打卡趋势（所有习惯合计）";
 
 "root_sign_in_note" = "登录后会自动同步到 iCloud（CloudKit 私有数据库）。";
+"root_local_mode_button" = "本地使用，无需登录";
+"root_local_mode_note" = "本地模式可使用全部功能，但不支持云同步。";
+"settings_sync_local_mode_note" = "当前为本地模式，云同步不可用。";
 "root_skip_sign_in" = "跳过登录（测试）";
 
 "stats_axis_item" = "项目";
