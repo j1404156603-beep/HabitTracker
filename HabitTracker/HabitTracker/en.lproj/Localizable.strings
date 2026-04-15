@@ -1,0 +1,109 @@
+/* Tesla minimal style - English */
+"settings_title" = "Settings";
+"settings_appearance" = "Appearance";
+"settings_language" = "Language";
+"settings_language_zh" = "Simplified Chinese";
+"settings_language_en" = "English";
+"settings_notifications" = "Notifications";
+"settings_sync" = "Sync";
+"settings_about" = "About";
+"settings_sign_out" = "Sign out";
+
+"appearance_light" = "Light";
+"appearance_dark" = "Dark";
+"appearance_system" = "System";
+
+"dialog_sign_out_title" = "Sign out?";
+"dialog_sign_out_clear" = "Clear data & sign out";
+"dialog_sign_out_keep" = "Keep data & sign out";
+"dialog_cancel" = "Cancel";
+
+"tab_home" = "Home";
+"tab_habits" = "Habits";
+"tab_stats" = "Stats";
+"tab_settings" = "Settings";
+
+"home_title" = "Today";
+"widget_desc_today_compact" = "Today's tasks (tap to open the app).";
+"widget_desc_today_interactive" = "Today's tasks (tap a pending row to check in).";
+"home_empty_title" = "No habits";
+"home_empty_subtitle" = "Create one in Habits";
+"home_check_in" = "Check in";
+"home_done" = "Done";
+"home_pending" = "Pending";
+
+"habits_title" = "Habits";
+"habits_section_title" = "Habits";
+"habits_sync" = "Sync";
+"habits_sync_disabled_title" = "Sync is disabled";
+"habits_sync_disabled_ok" = "OK";
+"habits_sync_disabled_message" = "Enable Sync in Settings to add or refresh.";
+
+"quick_check_in_title" = "Quick check-in";
+"quick_check_in_section_title" = "Pick a habit";
+"quick_check_in_close" = "Close";
+"quick_check_in_all_done_title" = "All done today";
+"quick_check_in_all_done_subtitle" = "Come back tomorrow";
+
+"check_in_cancel" = "Cancel";
+"check_in_success_title" = "Checked in!";
+"check_in_success_subtitle" = "+1 day";
+
+"about_title" = "About";
+"about_section_version" = "Version";
+"about_version_number" = "Version";
+
+"stats_title" = "Stats";
+"stats_share" = "Share";
+"stats_section_streak" = "Current streak";
+"stats_section_trend" = "Completion trend (30 days)";
+"stats_section_best_time" = "Best check-in time";
+"stats_streak_text" = "Current streak: %d days";
+
+"stats_share_text" = "HabitTracker Stats\n- Current streak: %d days\n- Today's completion: %d%%\n- Best time: %@";
+"time_prefix_dawn" = "Dawn";
+"time_prefix_morning" = "AM";
+"time_prefix_afternoon" = "PM";
+"time_prefix_evening" = "Night";
+"time_clock_suffix" = "o'clock";
+
+"create_habit_title" = "Create habit";
+"create_habit_templates" = "Templates";
+"create_habit_templates_hint" = "Pick a template to fill the form";
+"create_habit_name_section" = "Name";
+"create_habit_name_placeholder" = "e.g. Drink water";
+"create_habit_cycle_section" = "Cycle";
+"create_habit_cycle_picker" = "Cycle";
+"create_habit_cycle_daily" = "Daily";
+"create_habit_cycle_weekly" = "Weekly (X)";
+"create_habit_cycle_monthly" = "Monthly (X)";
+"create_habit_daily_window_toggle" = "Time window";
+"create_habit_start_time" = "Start";
+"create_habit_end_time" = "End";
+"create_habit_time_hint" = "End must be later than start";
+"create_habit_daily_once" = "Once per day";
+"create_habit_cancel" = "Cancel";
+"create_habit_save" = "Save";
+"create_habit_weekly_stepper" = "Weekly: %d times";
+"create_habit_monthly_stepper" = "Monthly: %d days";
+
+"check_in_trend_title" = "Check-in trend";
+"check_in_trend_caption" = "Last 30 days (all habits)";
+
+"root_sign_in_note" = "After sign-in, your data syncs to iCloud (private CloudKit DB).";
+"root_skip_sign_in" = "Skip sign-in (Debug)";
+
+"stats_axis_item" = "Item";
+"stats_axis_current" = "Current";
+"stats_axis_days" = "Days";
+"stats_axis_date" = "Date";
+"stats_axis_completion_rate" = "Completion";
+
+"trend_axis_date" = "Date";
+"trend_axis_check_in_count" = "Check-ins";
+
+"cloudkit_icloud_unavailable" = "iCloud is unavailable. Sign in to iCloud and enable iCloud Drive.";
+"cloudkit_sync_failed" = "Sync failed: %@";
+"cloudkit_save_failed" = "Save failed: %@";
+"cloudkit_delete_failed" = "Delete failed: %@";
+

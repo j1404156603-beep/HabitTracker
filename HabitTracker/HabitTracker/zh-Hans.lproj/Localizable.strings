@@ -1,0 +1,109 @@
+/* Tesla minimal style - Simplified Chinese */
+"settings_title" = "设置";
+"settings_appearance" = "外观";
+"settings_language" = "语言";
+"settings_language_zh" = "简体中文";
+"settings_language_en" = "English";
+"settings_notifications" = "通知";
+"settings_sync" = "数据同步";
+"settings_about" = "关于";
+"settings_sign_out" = "退出账号";
+
+"appearance_light" = "浅色";
+"appearance_dark" = "深色";
+"appearance_system" = "跟随系统";
+
+"dialog_sign_out_title" = "退出账号？";
+"dialog_sign_out_clear" = "清除数据并退出";
+"dialog_sign_out_keep" = "保存数据并退出";
+"dialog_cancel" = "取消";
+
+"tab_home" = "首页";
+"tab_habits" = "习惯";
+"tab_stats" = "统计";
+"tab_settings" = "设置";
+
+"home_title" = "今日待打卡";
+"widget_desc_today_compact" = "今日任务（点按打开 App）。";
+"widget_desc_today_interactive" = "今日任务（点按未完成项可打卡）。";
+"home_empty_title" = "暂无习惯";
+"home_empty_subtitle" = "先去“习惯”页创建一个习惯";
+"home_check_in" = "打卡";
+"home_done" = "已打卡";
+"home_pending" = "未打卡";
+
+"habits_title" = "习惯";
+"habits_section_title" = "习惯";
+"habits_sync" = "同步";
+"habits_sync_disabled_title" = "数据同步已关闭";
+"habits_sync_disabled_ok" = "好的";
+"habits_sync_disabled_message" = "请到“设置”中开启“数据同步”，再进行新增/同步操作。";
+
+"quick_check_in_title" = "快速打卡";
+"quick_check_in_section_title" = "选择一个习惯打卡";
+"quick_check_in_close" = "关闭";
+"quick_check_in_all_done_title" = "今天都已打卡";
+"quick_check_in_all_done_subtitle" = "明天再来";
+
+"check_in_cancel" = "取消";
+"check_in_success_title" = "已打卡！";
+"check_in_success_subtitle" = "+1天";
+
+"about_title" = "关于";
+"about_section_version" = "版本";
+"about_version_number" = "版本号";
+
+"stats_title" = "统计";
+"stats_share" = "分享";
+"stats_section_streak" = "连续打卡天数";
+"stats_section_trend" = "过去 30 天完成率趋势";
+"stats_section_best_time" = "最佳打卡时间";
+"stats_streak_text" = "当前连续打卡：%d 天";
+
+"stats_share_text" = "HabitTracker 统计\n- 当前连续打卡：%d 天\n- 今日完成率：%d%%\n- 最佳打卡时间：%@";
+"time_prefix_dawn" = "凌晨";
+"time_prefix_morning" = "上午";
+"time_prefix_afternoon" = "下午";
+"time_prefix_evening" = "晚上";
+"time_clock_suffix" = "点";
+
+"create_habit_title" = "创建习惯";
+"create_habit_templates" = "预设模板";
+"create_habit_templates_hint" = "选择一个模板可自动填充表单";
+"create_habit_name_section" = "习惯名称";
+"create_habit_name_placeholder" = "例如：喝水";
+"create_habit_cycle_section" = "周期类型";
+"create_habit_cycle_picker" = "周期";
+"create_habit_cycle_daily" = "每天";
+"create_habit_cycle_weekly" = "每周 X 次";
+"create_habit_cycle_monthly" = "每月 X 天";
+"create_habit_daily_window_toggle" = "指定每天时间段";
+"create_habit_start_time" = "开始时间";
+"create_habit_end_time" = "结束时间";
+"create_habit_time_hint" = "提示：结束时间需要晚于开始时间";
+"create_habit_daily_once" = "每天完成一次";
+"create_habit_cancel" = "取消";
+"create_habit_save" = "保存";
+"create_habit_weekly_stepper" = "每周 %d 次";
+"create_habit_monthly_stepper" = "每月 %d 天";
+
+"check_in_trend_title" = "打卡趋势";
+"check_in_trend_caption" = "过去 30 天打卡趋势（所有习惯合计）";
+
+"root_sign_in_note" = "登录后会自动同步到 iCloud（CloudKit 私有数据库）。";
+"root_skip_sign_in" = "跳过登录（测试）";
+
+"stats_axis_item" = "项目";
+"stats_axis_current" = "当前连续";
+"stats_axis_days" = "天数";
+"stats_axis_date" = "日期";
+"stats_axis_completion_rate" = "完成率";
+
+"trend_axis_date" = "日期";
+"trend_axis_check_in_count" = "打卡次数";
+
+"cloudkit_icloud_unavailable" = "iCloud 不可用（请在系统设置登录 iCloud，并开启 iCloud Drive）";
+"cloudkit_sync_failed" = "同步失败：%@";
+"cloudkit_save_failed" = "保存失败：%@";
+"cloudkit_delete_failed" = "删除失败：%@";
+
