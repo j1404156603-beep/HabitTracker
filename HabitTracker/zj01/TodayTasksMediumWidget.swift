@@ -2,8 +2,6 @@ import AppIntents
 import SwiftUI
 import WidgetKit
 
-// Mirror of `zj01/TodayTasksMediumWidget.swift` — the Xcode target compiles `zj01/`.
-
 struct TodayTasksMediumEntry: TimelineEntry {
     let date: Date
     let family: WidgetFamily
@@ -45,31 +43,46 @@ struct TodayTasksMediumProvider: TimelineProvider {
     private func maxTasks(for family: WidgetFamily) -> Int {
         switch family {
         case .systemMedium:
-            return 4
+            return 6
         case .systemLarge:
-            return 12
+            return 8
         default:
-            return 4
+            return 6
         }
     }
 
     private var sampleTasksMedium: [WidgetTaskItem] {
         [
-            .init(id: UUID(), title: "Drink water", isDoneToday: false),
-            .init(id: UUID(), title: "Workout", isDoneToday: false),
-            .init(id: UUID(), title: "Read", isDoneToday: false),
-            .init(id: UUID(), title: "Sleep early", isDoneToday: true),
+            .init(id: UUID(), title: "阅读", icon: "book", isDoneToday: false),
+            .init(id: UUID(), title: "喝水", icon: "drop", isDoneToday: false),
+            .init(id: UUID(), title: "运动", icon: "figure.walk", isDoneToday: true),
+            .init(id: UUID(), title: "记账", icon: "pencil", isDoneToday: true),
         ]
     }
 }
 
 struct TodayTasksMediumEntryView: View {
+    @Environment(\.colorScheme) private var colorScheme
     let entry: TodayTasksMediumEntry
 
     private var isMedium: Bool { entry.family == .systemMedium }
+    private var isLarge: Bool { entry.family == .systemLarge }
+    private var isMediumDense: Bool { isMedium && entry.tasks.count >= 5 }
+    private var mediumTasks: [WidgetTaskItem] { Array(entry.tasks.prefix(6)) }
+    private var useGrid: Bool {
+        if isMedium { return mediumTasks.count > 3 }
+        if isLarge { return entry.tasks.count > 4 }
+        return false
+    }
+    private var widgetBackground: Color {
+        colorScheme == .dark ? Color(light: 0x000000, dark: 0x000000) : Color(light: 0xF2F2F7, dark: 0x000000)
+    }
+    private var cardBackground: Color {
+        colorScheme == .dark ? Color(light: 0x1A1A1A, dark: 0x1A1A1A) : Color(light: 0xFFFFFF, dark: 0x1A1A1A)
+    }
 
     var body: some View {
-        Group {
+        VStack(alignment: .center, spacing: isLarge ? 16 : 12) {
             if entry.tasks.isEmpty {
                 Text("home_empty_title")
                     .font(.subheadline.weight(.medium))
@@ -77,58 +90,131 @@ struct TodayTasksMediumEntryView: View {
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if isMedium {
-                VStack(alignment: .leading, spacing: 4) {
-                    ForEach(entry.tasks) { t in
-                        MediumTaskRow(task: t, compact: true)
+                Group {
+                    if useGrid {
+                        let columns = [
+                            GridItem(.flexible(), spacing: 12),
+                            GridItem(.flexible(), spacing: 12),
+                        ]
+                        LazyVGrid(columns: columns, spacing: 12) {
+                            ForEach(mediumTasks) { t in
+                                TaskRow(
+                                    task: t,
+                                    family: .systemMedium,
+                                    cardBackground: cardBackground,
+                                    dense: isMediumDense
+                                )
+                            }
+                        }
+                    } else {
+                        VStack(alignment: .center, spacing: 12) {
+                            ForEach(mediumTasks) { t in
+                                TaskRow(
+                                    task: t,
+                                    family: .systemMedium,
+                                    cardBackground: cardBackground,
+                                    dense: false
+                                )
+                            }
+                        }
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .frame(maxWidth: .infinity, alignment: .center)
+            } else if useGrid {
+                let columns = [
+                    GridItem(.flexible(), spacing: isLarge ? 12 : 10),
+                    GridItem(.flexible(), spacing: isLarge ? 12 : 10)
+                ]
+                LazyVGrid(columns: columns, spacing: isLarge ? 16 : 12) {
+                    ForEach(entry.tasks) { t in
+                        TaskRow(
+                            task: t,
+                            family: entry.family,
+                            cardBackground: cardBackground,
+                            dense: false
+                        )
+                    }
+                }
             } else {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: isLarge ? 16 : 12) {
                     ForEach(entry.tasks) { t in
-                        MediumTaskRow(task: t, compact: false)
+                        TaskRow(
+                            task: t,
+                            family: entry.family,
+                            cardBackground: cardBackground,
+                            dense: false
+                        )
                     }
-                    Spacer(minLength: 0)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
         }
-        .padding(isMedium ? EdgeInsets(top: 8, leading: 10, bottom: 8, trailing: 10) : EdgeInsets(top: 12, leading: 14, bottom: 12, trailing: 14))
-        .containerBackground(Color.theme.background, for: .widget)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        .padding(.horizontal, isLarge ? 16 : 14)
+        .padding(.vertical, isMedium ? 16 : (isLarge ? 16 : 14))
+        .containerBackground(widgetBackground, for: .widget)
     }
 }
 
-private struct MediumTaskRow: View {
+private struct TaskRow: View {
     let task: WidgetTaskItem
-    var compact: Bool
+    let family: WidgetFamily
+    let cardBackground: Color
+    var dense: Bool = false
+
+    private var isLarge: Bool { family == .systemLarge }
+    private var titleSize: CGFloat {
+        if isLarge { return 14 }
+        return dense ? 12 : 13
+    }
+    private var iconSize: CGFloat {
+        if isLarge { return 20 }
+        return dense ? 14 : 15
+    }
+    private var rowVerticalPadding: CGFloat {
+        if isLarge { return 10 }
+        return dense ? 7 : 8
+    }
+    private var horizontalPadding: CGFloat {
+        if isLarge { return 12 }
+        return dense ? 9 : 10
+    }
 
     var body: some View {
-        HStack(alignment: .center, spacing: compact ? 8 : 10) {
+        HStack(alignment: .center, spacing: 10) {
+            Image(systemName: task.icon)
+                .font(.system(size: iconSize, weight: .regular))
+                .foregroundStyle(task.isDoneToday ? Color.theme.secondaryText : Color.theme.accent)
+                .frame(width: isLarge ? 20 : (dense ? 15 : 16))
+
             Text(task.title)
-                .font(.system(size: compact ? 13 : 14, weight: task.isDoneToday ? .regular : .semibold))
-                .foregroundStyle(task.isDoneToday ? Color.theme.secondaryText : Color.theme.primaryText)
+                .font(.system(size: titleSize, weight: task.isDoneToday ? .regular : .semibold))
+                .foregroundStyle(task.isDoneToday ? Color.theme.secondaryText : Color.theme.accent)
                 .strikethrough(task.isDoneToday, pattern: .solid, color: Color.theme.secondaryText)
-                .lineLimit(compact ? 1 : 2)
-                .minimumScaleFactor(compact ? 0.7 : 0.75)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            if task.isDoneToday {
-                circle(isDone: true, compact: compact)
-            } else {
-                Button(intent: checkInIntent(for: task.id)) {
-                    circle(isDone: false, compact: compact)
+            if family == .systemMedium {
+                if task.isDoneToday {
+                    circle(isDone: true, compact: true, dense: dense)
+                } else {
+                    Button(intent: checkInIntent(for: task.id)) {
+                        circle(isDone: false, compact: true, dense: dense)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
+            } else {
+                circle(isDone: task.isDoneToday, compact: false, dense: false)
             }
         }
-        .padding(.vertical, compact ? 5 : 8)
-        .padding(.horizontal, compact ? 10 : 12)
+        .padding(.vertical, rowVerticalPadding)
+        .padding(.horizontal, horizontalPadding)
         .background(
-            RoundedRectangle(cornerRadius: compact ? 9 : 12, style: .continuous)
-                .fill(Color.theme.cardBackground)
+            RoundedRectangle(cornerRadius: isLarge ? 12 : 10, style: .continuous)
+                .fill(cardBackground)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: compact ? 9 : 12, style: .continuous)
+            RoundedRectangle(cornerRadius: isLarge ? 12 : 10, style: .continuous)
                 .strokeBorder(Color.theme.divider, lineWidth: 1)
         )
     }
@@ -140,9 +226,9 @@ private struct MediumTaskRow: View {
     }
 
     @ViewBuilder
-    private func circle(isDone: Bool, compact: Bool) -> some View {
+    private func circle(isDone: Bool, compact: Bool, dense: Bool) -> some View {
         let diameter: CGFloat = compact ? 20 : 24
-        let hit: CGFloat = compact ? 28 : 36
+        let hit: CGFloat = compact ? (dense ? 24 : 26) : 34
         let strokeColor = isDone ? Color.theme.success : Color.theme.primaryText
         let fillColor = isDone ? Color.theme.success : Color.clear
 
@@ -176,9 +262,22 @@ struct TodayTasksMediumWidget: Widget {
     TodayTasksMediumWidget()
 } timeline: {
     TodayTasksMediumEntry(date: .now, family: .systemMedium, tasks: [
-        .init(id: UUID(), title: "阅读", isDoneToday: false),
-        .init(id: UUID(), title: "喝水", isDoneToday: true),
-        .init(id: UUID(), title: "运动", isDoneToday: true),
-        .init(id: UUID(), title: "记账", isDoneToday: true),
+        .init(id: UUID(), title: "阅读", icon: "book", isDoneToday: false),
+        .init(id: UUID(), title: "喝水", icon: "drop", isDoneToday: true),
+        .init(id: UUID(), title: "运动", icon: "figure.walk", isDoneToday: false),
+        .init(id: UUID(), title: "记账", icon: "pencil", isDoneToday: true),
+        .init(id: UUID(), title: "冥想", icon: "brain.head.profile", isDoneToday: false),
+    ])
+}
+
+#Preview(as: .systemLarge) {
+    TodayTasksMediumWidget()
+} timeline: {
+    TodayTasksMediumEntry(date: .now, family: .systemLarge, tasks: [
+        .init(id: UUID(), title: "阅读", icon: "book", isDoneToday: false),
+        .init(id: UUID(), title: "喝水", icon: "drop", isDoneToday: true),
+        .init(id: UUID(), title: "运动", icon: "figure.walk", isDoneToday: false),
+        .init(id: UUID(), title: "记账", icon: "pencil", isDoneToday: true),
+        .init(id: UUID(), title: "冥想", icon: "brain.head.profile", isDoneToday: false),
     ])
 }

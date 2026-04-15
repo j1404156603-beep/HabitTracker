@@ -8,9 +8,14 @@
 "settings_sync" = "Sync";
 "settings_reminder_title" = "Smart reminders";
 "settings_reminder_mode" = "Reminder mode";
+"settings_reminder_params" = "Reminder parameters";
+"settings_reminder_dnd" = "Do not disturb";
+"settings_reminder_channel" = "Notification channels";
 "settings_reminder_mode_interval" = "Interval";
 "settings_reminder_mode_window" = "Time window";
 "settings_reminder_interval" = "Remind every %d min";
+"settings_reminder_interval_plain" = "Reminder interval";
+"settings_reminder_window_plain" = "Reminder window";
 "settings_reminder_start" = "Start";
 "settings_reminder_end" = "End";
 "settings_reminder_quiet_start" = "Do not disturb from";
@@ -19,7 +24,11 @@
 "settings_reminder_sound" = "Sound";
 "settings_reminder_haptic" = "Vibration";
 "settings_water_goal" = "Daily water goal: %d ml";
+"settings_water_goal_plain" = "Daily goal";
 "settings_water_per_checkin" = "Per check-in: %d ml";
+"settings_water_per_checkin_plain" = "Per check-in";
+"settings_unit_minute" = " min";
+"settings_unit_ml" = " ml";
 "settings_about" = "About";
 "settings_sign_out" = "Sign out";
 

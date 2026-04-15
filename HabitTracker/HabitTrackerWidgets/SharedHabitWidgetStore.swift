@@ -6,6 +6,7 @@ import WidgetKit
 struct WidgetTaskItem: Identifiable, Codable, Hashable {
     var id: UUID
     var title: String
+    var icon: String
     var isDoneToday: Bool
 }
 
@@ -20,6 +21,7 @@ enum SharedHabitWidgetStore {
             WidgetTaskItem(
                 id: h.id,
                 title: h.title,
+                icon: iconName(for: h),
                 isDoneToday: h.isCompletedToday(calendar: cal, now: now)
             )
         }
@@ -40,5 +42,22 @@ enum SharedHabitWidgetStore {
         LocalHabitStore().save(habits)
 
         WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    private static func iconName(for habit: Habit) -> String {
+        let icons = [
+            "drop",
+            "figure.walk",
+            "book",
+            "fork.knife",
+            "pills",
+            "bed.double",
+            "brain.head.profile",
+            "leaf",
+            "heart",
+            "sun.max"
+        ]
+        let idx = abs(habit.title.hashValue) % icons.count
+        return icons[idx]
     }
 }

@@ -151,66 +151,196 @@ struct SettingsView: View {
         .task {
             await settings.scheduleReminders(using: store.habits)
         }
-        .onChange(of: reminderRefreshToken) { _ in
+        .onChange(of: reminderRefreshToken) {
             Task { await settings.scheduleReminders(using: store.habits) }
         }
     }
 }
 
 private struct ReminderSettingsSection: View {
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @ObservedObject var settings: AppSettings
+
+    private var moduleBackground: Color {
+        colorScheme == .dark ? Color(light: 0x1A1A1A, dark: 0x1A1A1A) : Color(light: 0xF2F2F7, dark: 0x1A1A1A)
+    }
+
+    private var controlBackground: Color {
+        colorScheme == .dark ? Color(light: 0x2A2A2A, dark: 0x2A2A2A) : Color(light: 0xFFFFFF, dark: 0x2A2A2A)
+    }
+
+    private var isRegularWidth: Bool { horizontalSizeClass == .regular }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             TeslaSectionTitle("settings_reminder_title")
+            ReminderModule(title: "settings_reminder_mode", background: moduleBackground) {
+                Picker("settings_reminder_mode", selection: Binding(
+                    get: { settings.reminderMode },
+                    set: { settings.reminderMode = $0 }
+                )) {
+                    ForEach(AppSettings.ReminderMode.allCases) { mode in
+                        Text(mode.labelKey).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .tint(Color.theme.accent)
+            }
 
-            Picker("settings_reminder_mode", selection: Binding(
-                get: { settings.reminderMode },
-                set: { settings.reminderMode = $0 }
-            )) {
-                ForEach(AppSettings.ReminderMode.allCases) { mode in
-                    Text(mode.labelKey).tag(mode)
+            ReminderModule(title: "settings_reminder_params", background: moduleBackground) {
+                VStack(alignment: .leading, spacing: 10) {
+                    if settings.reminderMode == .interval {
+                        Stepper(value: $settings.reminderIntervalMinutes, in: 15...120, step: 15) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "clock")
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(Color.theme.secondaryText)
+                                Text("settings_reminder_interval_plain")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(Color.theme.primaryText)
+                                Spacer(minLength: 8)
+                                Text("\(settings.reminderIntervalMinutes)\(String(localized: "settings_unit_minute"))")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(Color.theme.secondaryText)
+                            }
+                        }
+                        .padding(10)
+                        .background(RoundedRectangle(cornerRadius: 10).fill(controlBackground))
+                    } else {
+                        HStack(spacing: 8) {
+                            Image(systemName: "clock.arrow.circlepath")
+                                .font(.system(size: 16))
+                                .foregroundStyle(Color.theme.secondaryText)
+                            Text("settings_reminder_window_plain")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.theme.primaryText)
+                            Spacer(minLength: 8)
+                            Text("\(timeText(minutes: settings.reminderStartMinutes))-\(timeText(minutes: settings.reminderEndMinutes))")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.theme.secondaryText)
+                        }
+                        .padding(10)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(RoundedRectangle(cornerRadius: 10).fill(controlBackground))
+                    }
+
+                    Stepper(value: $settings.dailyWaterGoalML, in: 500...3000, step: 100) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "drop")
+                                .font(.system(size: 16))
+                                .foregroundStyle(Color.theme.secondaryText)
+                            Text("settings_water_goal_plain")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.theme.primaryText)
+                            Spacer(minLength: 8)
+                            Text("\(settings.dailyWaterGoalML)\(String(localized: "settings_unit_ml"))")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.theme.secondaryText)
+                        }
+                    }
+                    .padding(10)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(controlBackground))
+
+                    Stepper(value: $settings.singleCheckInML, in: 100...500, step: 50) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "drop.circle")
+                                .font(.system(size: 16))
+                                .foregroundStyle(Color.theme.secondaryText)
+                            Text("settings_water_per_checkin_plain")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.theme.primaryText)
+                            Spacer(minLength: 8)
+                            Text("\(settings.singleCheckInML)\(String(localized: "settings_unit_ml"))")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.theme.secondaryText)
+                        }
+                    }
+                    .padding(10)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(controlBackground))
                 }
             }
-            .pickerStyle(.segmented)
 
-            if settings.reminderMode == .interval {
-                Stepper(value: $settings.reminderIntervalMinutes, in: 30...180, step: 30) {
-                    Text("settings_reminder_interval \(settings.reminderIntervalMinutes)")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(Color.theme.primaryText)
+            ReminderModule(title: "settings_reminder_dnd", background: moduleBackground) {
+                VStack(spacing: 10) {
+                    HStack(spacing: 12) {
+                        LinkedMinutePicker(label: "settings_reminder_start", minuteValue: $settings.reminderStartMinutes)
+                        LinkedMinutePicker(label: "settings_reminder_end", minuteValue: $settings.reminderEndMinutes)
+                    }
+                    .onChange(of: settings.reminderStartMinutes) {
+                        if settings.reminderEndMinutes <= settings.reminderStartMinutes {
+                            settings.reminderEndMinutes = min(1439, settings.reminderStartMinutes + 60)
+                        }
+                    }
+
+                    HStack(spacing: 12) {
+                        LinkedMinutePicker(label: "settings_reminder_quiet_start", minuteValue: $settings.reminderQuietStartMinutes)
+                        LinkedMinutePicker(label: "settings_reminder_quiet_end", minuteValue: $settings.reminderQuietEndMinutes)
+                    }
                 }
             }
 
-            HStack(spacing: 12) {
-                MinutePicker(label: "settings_reminder_start", minuteValue: $settings.reminderStartMinutes)
-                MinutePicker(label: "settings_reminder_end", minuteValue: $settings.reminderEndMinutes)
-            }
+            ReminderModule(title: "settings_reminder_channel", background: moduleBackground) {
+                let channels = [
+                    ReminderChannelItem(icon: "app.badge", title: "settings_reminder_banner", isOn: $settings.reminderBannerEnabled),
+                    ReminderChannelItem(icon: "speaker.wave.2", title: "settings_reminder_sound", isOn: $settings.reminderSoundEnabled),
+                    ReminderChannelItem(icon: "iphone.radiowaves.left.and.right", title: "settings_reminder_haptic", isOn: $settings.reminderHapticsEnabled),
+                ]
 
-            HStack(spacing: 12) {
-                MinutePicker(label: "settings_reminder_quiet_start", minuteValue: $settings.reminderQuietStartMinutes)
-                MinutePicker(label: "settings_reminder_quiet_end", minuteValue: $settings.reminderQuietEndMinutes)
+                if isRegularWidth {
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                        ForEach(channels) { c in
+                            ReminderChannelToggle(item: c, background: controlBackground)
+                        }
+                    }
+                } else {
+                    VStack(spacing: 8) {
+                        ForEach(channels) { c in
+                            ReminderChannelToggle(item: c, background: controlBackground)
+                        }
+                    }
+                }
             }
+        }
+    }
 
-            TeslaRowToggle(icon: "app.badge", title: "settings_reminder_banner", isOn: $settings.reminderBannerEnabled)
-            TeslaRowToggle(icon: "speaker.wave.2", title: "settings_reminder_sound", isOn: $settings.reminderSoundEnabled)
-            TeslaRowToggle(icon: "iphone.radiowaves.left.and.right", title: "settings_reminder_haptic", isOn: $settings.reminderHapticsEnabled)
+    private func timeText(minutes: Int) -> String {
+        let clamped = max(0, min(1439, minutes))
+        let h = clamped / 60
+        let m = clamped % 60
+        return String(format: "%02d:%02d", h, m)
+    }
+}
 
-            Stepper(value: $settings.dailyWaterGoalML, in: 400...4000, step: 100) {
-                Text("settings_water_goal \(settings.dailyWaterGoalML)")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(Color.theme.primaryText)
+private struct ReminderModule<Content: View>: View {
+    let title: LocalizedStringKey
+    let background: Color
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        Section {
+            VStack(alignment: .leading, spacing: 10) {
+                content
             }
-            Stepper(value: $settings.singleCheckInML, in: 100...500, step: 50) {
-                Text("settings_water_per_checkin \(settings.singleCheckInML)")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(Color.theme.primaryText)
+            .padding(10)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(background)
+            )
+        } header: {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(title)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color.theme.secondaryText)
+                Rectangle()
+                    .fill(Color.theme.divider.opacity(0.5))
+                    .frame(height: 1)
             }
         }
     }
 }
 
-private struct MinutePicker: View {
+private struct LinkedMinutePicker: View {
     let label: LocalizedStringKey
     @Binding var minuteValue: Int
 
@@ -241,6 +371,41 @@ private struct MinutePicker: View {
                 .tint(Color.theme.accent)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct ReminderChannelItem: Identifiable {
+    let id = UUID()
+    let icon: String
+    let title: LocalizedStringKey
+    var isOn: Binding<Bool>
+}
+
+private struct ReminderChannelToggle: View {
+    let item: ReminderChannelItem
+    let background: Color
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: item.icon)
+                .font(.system(size: 16, weight: .regular))
+                .foregroundStyle(item.isOn.wrappedValue ? Color.theme.accent : Color.theme.secondaryText)
+                .frame(width: 18)
+            Text(item.title)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(Color.theme.primaryText)
+                .lineLimit(1)
+            Spacer(minLength: 6)
+            Toggle("", isOn: item.isOn)
+                .labelsHidden()
+                .tint(Color.theme.accent)
+        }
+        .padding(.vertical, 9)
+        .padding(.horizontal, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(background)
+        )
     }
 }
 
